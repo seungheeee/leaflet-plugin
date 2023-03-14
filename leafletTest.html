@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+        crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+          integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+          crossorigin=""></script>
+  <style>#map { height: 880px; }</style>
+  <title>Title</title>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  // Find our map id
+  // initialize the map on the "map" div with a given center and zoom
+  var map = L.map('map', {
+    center: [37.368,126.900035],
+    zoom: 6
+  });
+  // openstreetmap으로 지도의 베이스를 설정합니다.
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  // geoserver에서 가져오는 wmsLayer를 설정합니다.
+  var wmsLayer = L.tileLayer.wms('https://www.weather.go.kr/wgis-geos/kma_2022/wms', {
+    layers: 'kma_2022:shp_lcc_cstl',
+    transparent: true,
+    format: 'image/png',
+    version:'1.1.0',
+  }).addTo(map);
+
+  var wmsOptions = {opacity: 0.5}
+  //map.setView();
+
+</script>
+
+</body>
+</html>

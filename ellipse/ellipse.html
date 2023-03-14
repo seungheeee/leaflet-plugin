@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="./l.ellipse.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div id="map" style="width: 1200px; height: 800px;"></div>
+
+<script>
+
+  var map = L.map('map').setView([51.505, -0.09], 13);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  let opac1 = 0;
+  let fillC1 = 'blue';
+  let fillOpac1 = 0.3;
+
+  let opac2 = 0;
+  let fillC2 = 'yellow';
+  let fillOpac2 = 0.3;
+  //L.ellipse parameter latlng, radii, tilt, options
+  //latlng 타원의 중심이 지도에 배치되어야 하는 위도 및 경도 좌표의 배열
+  //radii 타원의 수평 및 수직 반경을 지정하는 배열
+  //tilt 타원의 회전 각도(선택 사항)
+  //options style 옵션 등
+  let ellipse1 = L.ellipse([51.505, -0.05], [500, 200], 0, {
+    //color: 'green',
+    opacity: opac1,
+    fillColor: fillC1,
+    fillOpacity: fillOpac1
+  }).addTo(map);
+
+  let ellipse2 = L.ellipse([51.505, -0.05], [300, 150], 0, {
+    //color: 'green',
+    opacity: opac2,
+    fillColor: fillC2,
+    fillOpacity: fillOpac2
+  }).addTo(map);
+
+
+  for(let i = 0; i < 50; i++){
+    ellipse1 = L.ellipse([51.504 - (i/1000), -0.05 + (i/1000)], [500, 200], i, {
+      //color: 'green',
+      opacity: opac1,
+      fillColor: fillC1,
+      fillOpacity: fillOpac1
+    }).addTo(map);
+  }
+
+  for(let i = 0; i < 50; i++){
+    ellipse2 = L.ellipse([51.504 - (i/1000), -0.05 + (i/1000)], [300, 150], i, {
+      //color: 'green',
+      opacity: opac2,
+      fillColor: fillC2,
+      fillOpacity: fillOpac2
+    }).addTo(map);
+  }
+
+  /*
+  ellipse1 = L.ellipse([51.508, -0.07], [250, 300], 45, {
+    color: 'blue',
+    opacity: 0,
+    fillColor: 'blue',
+    fillOpacity: 0.5
+  }).addTo(map);
+
+  ellipse1 = L.ellipse([51.505, -0.09], [900, 150], 90, {
+    color: 'yellow',
+    opacity: 0,
+    fillColor: 'yellow',
+    fillOpacity: 0.5
+  }).addTo(map);
+
+  ellipse1 = L.ellipse([51.508, -0.12], [750, 400], 135, {
+    color: 'red',
+    opacity: 0,
+    fillColor: 'red',
+    fillOpacity: 0.5
+  }).addTo(map);
+*/
+</script>
+</body>
+</html>
