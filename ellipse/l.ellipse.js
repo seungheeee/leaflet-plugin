@@ -27,6 +27,8 @@ L.SVG.include ({
             'A' + rx + ',' + ry + ',' + phi + ',' +
             endPoint.largeArc + ',' + endPoint.sweep + ',' +
             endPoint.x1 + ',' + endPoint.y1 + ' z';
+
+        console.log(d);
         this._setPath(layer, d);
     }
 });
@@ -102,7 +104,7 @@ L.Ellipse = L.Path.extend({
 
     getBounds: function () {
         // TODO respect tilt (bounds are too big)
-        var lngRadius = this.(),
+        var lngRadius = this._getLngRadius(),
             latRadius = this._getLatRadius(),
             latlng = this._latlng;
 

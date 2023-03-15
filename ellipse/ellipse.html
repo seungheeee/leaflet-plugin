@@ -9,6 +9,17 @@
 </head>
 <body>
 <div id="map" style="width: 1200px; height: 800px;"></div>
+<canvas id="mycanvas"></canvas>
+<svg width="300" height="300">
+    <!--
+    M : 특정 좌표로 이동
+    L : 특정 좌표까지 직선 그리기
+    C: 3차 베지어 곡선 그리기
+    Q: 2차 베지어 곡선 그리기
+    A: 타원호를 그린다
+    -->
+    <path d="M100,100 L200,100 Q250,150 200,200 L100,200 Z" stroke="black" fill="none" />
+</svg>
 
 <script>
 
@@ -44,6 +55,16 @@
     fillOpacity: fillOpac2
   }).addTo(map);
 
+  const canvas = document.getElementById("mycanvas");
+  const context = canvas.getContext("2d");
+
+  context.beginPath();
+  context.moveTo(100, 100);
+  context.lineTo(200, 100);
+  context.quadraticCurveTo(250, 150, 200, 200);
+  context.lineTo(100, 200);
+  context.closePath();
+  context.stroke();
 
   for(let i = 0; i < 50; i++){
     ellipse1 = L.ellipse([51.504 - (i/1000), -0.05 + (i/1000)], [500, 200], i, {
