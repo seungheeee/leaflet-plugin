@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+  <title>타원들의 접점 구하기</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  //canvas에 타원을 그리는 함수
+  function drawEllipse(x, y, width, height) {
+    ctx.beginPath();
+    ctx.ellipse(x, y, width, height, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  /*function findIntersectionPoints(a1, b1, h1, k1, a2, b2, h2, k2) {
+    console.log(a1 + "_" + b1 + "_" + h1 + "_" + k1 + "_" + a2 + "_" + b2 + "_" +h2 + "_" + k2);
+    // 타원의 방정식: (x - h)^2 / a^2 + (y - k)^2 / b^2 = 1
+    // 이 방정식을 연립하여 접점을 찾습니다.
+    // 여기서는 간단한 예시를 위해 두 타원이 수평으로 배치되고 중심이 같은 경우만 고려합니다.
+
+    if (h1 !== h2 || k1 !== k2) {
+      return [];
+    }
+
+    const x1 = h1;
+    const x2 = h1 + Math.abs(a1 - a2);
+    const y = k1;
+
+    return [{ x: x1, y: y }, { x: x2, y: y }];
+  }*/
+
+  function findIntersectionPoints(a1, b1, h1, k1, a2, b2, h2, k2) {
+    const tolerance = 0.1;
+    const maxIterations = 100;
+
+    function ellipseEquation(x, y, a, b, h, k) {
+      return ((x - h) * (x - h)) / (a * a) + ((y - k) * (y - k)) / (b * b) - 1;
+    }
+
+    function findRoots(a1, b1, h1, k1, a2, b2, h2, k2, x) {
+      const yGuess = [k1, k2];
+      //numeric.uncmin(최소화할 함수, 최소 포인트에 대한 초기 추측, 주어진 지점에서 f의 그래디언트를 계산하는 함수, 알고리즘 옵션)
+      const yRoots = numeric.uncmin(
+        (y) => Math.abs(ellipseEquation(x, y[0], a1, b1, h1, k1) - ellipseEquation(x, y[1], a2, b2, h2, k2)),
+        yGuess,
+        tolerance,
+        //maxIterations
+      );
+      return yRoots.solution;
+    }
+
+    const xStart = Math.min(h1 - a1, h2 - a2);
+    const xEnd = Math.max(h1 + a1, h2 + a2);
+    const xRange = xEnd - xStart;
+    const numPoints = 1000;
+
+    const intersectionPoints = [];
+
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xStart + (xRange * i) / numPoints;
+      const yRoots = findRoots(a1, b1, h1, k1, a2, b2, h2, k2, x);
+
+      for (const yRoot of yRoots) {
+        if (Math.abs(ellipseEquation(x, yRoot, a1, b1, h1, k1)) < tolerance && Math.abs(ellipseEquation(x, yRoot, a2, b2, h2, k2)) < tolerance) {
+          intersectionPoints.push({ x, y: yRoot });
+        }else{
+          console.log(Math.abs(ellipseEquation(x, yRoot, a1, b1, h1, k1)) + "________" + Math.abs(ellipseEquation(x, yRoot, a2, b2, h2, k2)));
+        }
+      }
+    }
+
+    return intersectionPoints;
+  }
+
+  function drawIntersectionPoints(points) {
+    points.forEach(point => {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    });
+  }
+
+  function drawCenterPoints(points) {
+    points.forEach(point => {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+    });
+  }
+
+  const ellipse1 = { x: 250, y: 150, width: 100, height: 50 };
+  const ellipse2 = { x: 250, y: 250, width: 150, height: 50 };
+  const center = [{x: 250, y: 250},{x: 250, y: 150}];
+  drawCenterPoints(center);
+
+  drawEllipse(ellipse1.x, ellipse1.y, ellipse1.width, ellipse1.height);
+  drawEllipse(ellipse2.x, ellipse2.y, ellipse2.width, ellipse2.height);
+
+  const intersectionPoints = findIntersectionPoints(
+          ellipse1.width / 2, ellipse1.height / 2, ellipse1.x, ellipse1.y,
+          ellipse2.width / 2, ellipse2.height / 2, ellipse2.x, ellipse2.y
+  );
+
+  drawIntersectionPoints(intersectionPoints);
+</script>
+</body>
+</html>
