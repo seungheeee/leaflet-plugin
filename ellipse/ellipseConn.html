@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
   <title>타원들의 접점 구하기</title>
   <style>
     canvas {
@@ -20,28 +19,30 @@
   <canvas id="canvas2" width="500" height="500" style="float: left;"></canvas>
   <h2 style="float: left;">&nbsp;&nbsp;4개의 점으로 타원 그리기</h2>
 </div>
-<div id="text1" style="position: absolute;"></div>
+<div id="text1" style="position: absolute; top: 10px;"></div>
 <div id="text2" style="position: absolute;"></div>
 <div id="text3" style="position: absolute;"></div>
 <div id="text4" style="position: absolute;"></div>
 <script>
+  //canvas1
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
 
+  //canvas2
   const canvas2 = document.getElementById('canvas2');
   const ctx2 = canvas2.getContext('2d');
 
   const text = document.getElementById('text1');
 
-  /*
   //좌표값 텍스트로 표시
-  const x = 50;
-  const y = 50 - 15 + 500;
+  canvas.addEventListener('mousemove', function (event){
+    //const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
 
-  text.innerHTML = `(${x}, ${y+15})`;
-  text.style.left = `${x}px`;
-  text.style.top = `${y}px`;
-  */
+    text.innerText = `${mouseX}&${mouseY}`;
+  });
+
   //시작점
   ctx2.beginPath();
   ctx2.fillStyle = 'yellow' ;  //내부 색깔 지정
@@ -65,6 +66,8 @@
   ctx2.strokeStyle = 'blue';
   ctx2.stroke();
 
+
+
   //canvas에 타원을 그리는 함수
   function drawEllipse(x, y, width, height) {
     ctx.beginPath();            // 경로 시작
@@ -78,24 +81,6 @@
     ctx.stroke(); //경로에 있는 도형 그림
   }
 
-  function solveEquation(a, b, c, d, e, f, g, h) {
-    // 방정식을 x와 y에 대해 정리합니다.
-    const A = 1 / (b * b) - 1 / (f * f);
-    const B = -2 * e / (f * f) + 2 * a / (b * b);
-    const C = e * e / (f * f) + a * a / (b * b) - c * c / (d * d) - g * g / (h * h);
-
-    // 이차 방정식을 푸는 공식을 사용하여 x의 값을 찾습니다.
-    const discriminant = B * B - 4 * A * C;
-    const sqrtDiscriminant = Math.sqrt(Math.abs(discriminant));
-    const x1 = (-B + sqrtDiscriminant) / (2 * A);
-    const x2 = (-B - sqrtDiscriminant) / (2 * A);
-
-    // x 값에서 y 값을 찾습니다.
-    const y1 = (c * c - d * d - 2 * a * x1 + x1 * x1 * (b * b + d * d) / (b * b * f * f)) / (2 * c);
-    const y2 = (c * c - d * d - 2 * a * x2 + x2 * x2 * (b * b + d * d) / (b * b * f * f)) / (2 * c);
-
-    return [{x: x1, y: y1}, {x: x2, y: y2}];
-  }
 
   function drawIntersectionPoints(points) {
     points.forEach(point => {
@@ -118,19 +103,11 @@
     });
   }
 
-  function getEllipseEquation(x0, y0, a, b) {
-    return (x, y) => {
-      const xDiff = x - x0;
-      const yDiff = y - y0;
-      return (xDiff * xDiff) / (a * a) + (yDiff * yDiff) / (b * b) - 1;
-    };
-  }
-
   const y1 = 212;
   const y2 = 240;
   const ellipse1 = { x: 250, y: y1, width: 100, height: 50 };
   const ellipse2 = { x: 250, y: y2, width: 150, height: 50 };
-  let center = [{x: ellipse1.x, y: y1},{x: ellipse2.x, y: y2}];
+  let center = [{x: ellipse1.x, y: ellipse1.y},{x: ellipse2.x, y: ellipse2.y}];
   //drawCenterPoints(center);
 
   //타원 그리기
@@ -138,21 +115,34 @@
   drawEllipse(ellipse2.x, ellipse2.y, ellipse2.width, ellipse2.height);
 
   //중심점의 거리
-  const distance = Math.sqrt(Math.pow(y1 - 250, 2) + Math.pow(y2 - 250, 2));
+  const distance = Math.sqrt(Math.pow(ellipse2.x - ellipse1.x, 2) + Math.pow(ellipse2.y - ellipse1.y, 2));
+  console.log(`distance : ${distance}`);
 
   //두 타원이 겹치는 경우
-  if (distance < (ellipse1.width/2 + ellipse2.width/2) && distance > Math.abs(ellipse1.width/2 - ellipse2.width/2)) {
+  if (distance < (ellipse1.height/2 + ellipse2.height/2) && distance > Math.abs(ellipse1.height/2 - ellipse2.height/2)) { //두 원의 반지름 뺀 값 < 두 원의 중심점 사이의 거리 < 두 원의 반지름 더한 값
     // 두 접선의 교점을 구함
-    const x1 = (50 * 75 * (240 - 250)) / (distance * distance);
-    const y1 = (50 * 75 * (212 - 250)) / (distance * distance);
-    const x2 = -x1;
-    const y2 = -y1;
+    const a1 = (50 * 75 * (y2 - 211)) / (distance * distance);
+    const b1 = 211;
+    const a2 = (50 * 50 * (y1 - 211)) / (distance * distance);
+    const b2 = 211;
 
     // 접점 좌표를 출력함
-    console.log(`(${250 + x1}, ${212 + y1})`);
-    console.log(`(${250 + x2}, ${212 + y2})`);
+    const contactPoint1 = {x : ellipse1.x + a1, y : b1};
+    const contactPoint2 = {x : ellipse2.x + a2, y : b2};
+    console.log(contactPoint1);
+    console.log(contactPoint2);
 
     // 첫번째 타원 그리기
+  /*ellipse
+    x: 타원 중심의 x 좌표.
+    y: 타원 중심의 y 좌표.
+    radiusX: x 축을 따라 타원의 반지름입니다. 이것은 타원 너비의 절반입니다.
+    radiusY: y 축을 따라 타원의 반지름입니다. 이것은 타원 높이의 절반입니다.
+    rotation: 타원의 회전(라디안 단위). 이렇게 하면 타원이 중심을 기준으로 시계 방향으로 회전합니다.
+    startAngle: 타원의 시작 각도(라디안 단위). 이것은 타원 그리기를 시작할 각도입니다.
+    endAngle: 타원의 끝 각도(라디안 단위). 이것은 타원 그리기를 중지하는 각도입니다.
+    anticlockwise: 반시계 방향으로 타원을 그릴지 여부를 지정하는 선택적 부울 매개변수입니다. 'true'이면 타원은 시계 반대 방향으로 그려지고, 그렇지 않으면 시계 방향으로 그려집니다. 기본값은 '거짓'입니다.
+
     ctx.beginPath();
     ctx.ellipse(250, 212, 50, 25, 0, 0, 2 * Math.PI);
     ctx.stroke();
@@ -161,19 +151,28 @@
     ctx.beginPath();
     ctx.ellipse(250, 250, 75, 25, 0, 0, 2 * Math.PI);
     ctx.stroke();
+  */
 
+
+    ctx.beginPath();
+    ctx.fillStyle = 'red' ;  //내부 색깔 지정
+    ctx.fillRect(contactPoint1.x, contactPoint1.y, 5, 5);
+    ctx.fillRect(contactPoint2.x, contactPoint2.y, 5, 5);
+    ctx.stroke();
+    /*
     // 첫번째 접점 그리기
     ctx.beginPath();
-    ctx.arc(250 + x1, 212 + y1, 3, 0, 2 * Math.PI);
+    ctx.arc(contactPoint1.x, contactPoint1.y, 3, 0, 2 * Math.PI);
     ctx.fillStyle = 'red';
     ctx.fill();
 
     // 두번째 접점 그리기
     ctx.beginPath();
-    ctx.arc(250 + x2, 212 + y2, 3, 0, 2 * Math.PI);
+
+    ctx.arc(contactPoint2.x, contactPoint2.y, 3, 0, 2 * Math.PI);
     ctx.fillStyle = 'red';
     ctx.fill();
-
+    */
     //center = [{x: (250 + x1), y: (212 + y1)},{x: (250 + x2), y: (212 + y2)}];
     //drawCenterPoints(center);
   }
@@ -182,15 +181,6 @@
     console.log('두 타원은 접점을 가지지 않습니다.');
   }
 
-
-
-  const intersectionPoints = solveEquation(
-          ellipse1.x, ellipse1.y, ellipse1.width / 2, ellipse1.height / 2,
-          ellipse2.x, ellipse2.y, ellipse2.width / 2, ellipse2.height / 2
-  );
-
-  console.log(intersectionPoints);
-  drawIntersectionPoints(intersectionPoints);
 
 </script>
 </body>
