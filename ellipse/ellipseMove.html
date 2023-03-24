@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>타원들의 접점 구하기</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+<div>
+  <canvas id="canvas" width="500" height="500" style="float: left;"></canvas>
+  <h2 style="float: left;">&nbsp;&nbsp;canvas 함수 타원 그리기</h2>
+</div>
+<!--
+<div style="clear:both">
+  <canvas id="canvas2" width="500" height="500" style="float: left;"></canvas>
+  <h2 style="float: left;">&nbsp;&nbsp;4개의 점으로 타원 그리기</h2>
+</div>
+-->
+<div id="text1" style="position: absolute; top: 10px;"></div>
+<div id="text2" style="position: absolute;"></div>
+<div id="text3" style="position: absolute;"></div>
+<div id="text4" style="position: absolute;"></div>
+<script>
+  //canvas1
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  // Define the vertices as an array of objects with x and y coordinates
+  /*const vertices = [
+    { x: 100, y: 50 , dx: 75, dy: 25},
+    { x: 100, y: 100, dx: 125, dy: 75 },
+    { x: 50, y: 100, dx: 75, dy: 125 },
+    { x: 50, y: 50, dx: 25, dy: 75 }
+  ];
+  */
+  let isMouseDown = false;
+  let scaleX = 1;
+  let scaleY = 1;
+
+  function drawEllipse(scaleX, scaleY) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.ellipse(canvas.width / 2, canvas.height / 2, 100 * scaleX, 100 * scaleY, 0, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
+  drawEllipse(scaleX, scaleY);
+
+  canvas.addEventListener('mousedown', (event) => {
+    isMouseDown = true;
+  });
+
+  canvas.addEventListener('mousemove', (event) => {
+    if (isMouseDown) {
+      const offsetX = event.movementX;
+      const offsetY = event.movementY;
+
+      scaleX += offsetX / 100;
+      scaleY += offsetY / 100;
+
+      drawEllipse(scaleX, scaleY);
+    }
+  });
+
+  canvas.addEventListener('mouseup', (event) => {
+    isMouseDown = false;
+  });
+</script>
+</body>
+</html>
