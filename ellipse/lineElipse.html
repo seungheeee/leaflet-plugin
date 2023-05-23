@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet Straight Line</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <style>
+    #map { height: 800px; }
+    .leaflet-marker-icon {
+      background-color: black;
+      width: 15px!important;
+      height: 15px!important;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script>
+  // Set the latitude and longitude for the starting and ending points of the line
+  //var startPoint = [40.7128, -74.0060]; // New York City
+  //var endPoint = [34.0522, -118.2437]; // Los Angeles
+
+  // Create a map centered at the starting point
+  var map = L.map('map').setView([51.509, -0.04], 14);
+
+  // Add the OpenStreetMap tile layer to the map
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Create a GeoJSON object for the line
+  var polygon = L.polygon([
+    [51.509, -0.08],
+    [51.505, -0.06],
+    [51.502, -0.045],
+    [51.504, -0.03],
+    [51.509, -0.015],
+    [51.516, -0.015],
+    [51.52, -0.03],
+    [51.522, -0.045],
+    [51.52, -0.06],
+    [51.516, -0.08]
+  ]).addTo(map);
+
+  // Enable polygon editing
+  var editablePolygon = new L.EditToolbar.Edit(map, {
+    featureGroup: L.featureGroup([polygon])
+  });
+
+  editablePolygon.enable();
+
+  // Set up event listeners for polygon drag events
+  map.on('draw:created', function (event) {
+    var layer = event.layer;
+    layer.on('dragstart', function () {
+      console.log("Aa");
+      map.dragging.disable();
+    });
+
+    layer.on('dragend', function () {
+      map.dragging.enable();
+    });
+  });
+</script>
+</body>
+</html>
